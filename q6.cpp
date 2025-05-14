@@ -1,41 +1,15 @@
 #include <iostream>
-#include <fstream>
-#include <string>
 #include <vector>
+#include <string>
+#include <algorithm>
 
 using namespace std;
-
-/*bool guloso(long chute, const vector<long>& sacos_original, long C, long T) {
-    vector<long> sacos = sacos_original; 
-    long capacidade = T * chute;
-
-    long atual = 0;
-    while (!sacos.empty()) {
-        long volume = sacos.back();
-        sacos.pop_back();
-
-        if (volume > capacidade) return false;
-
-        if (atual + volume <= capacidade) {
-            atual += volume;
-        } 
-        
-        else {
-            C--;
-            if (C == 0) return false;
-            atual = volume;
-        }
-    }
-
-    return true;
-}*/
 
 bool guloso(long chute, const vector<long>& sacos, long C, long T) {
     long capacidade = T * chute;
     long atual = 0;
 
-    for (int i = 0; i < sacos.size(); ++i) {
-        long volume = sacos[i];
+    for (long volume : sacos) {
         if (volume > capacidade) return false;
 
         if (atual + volume <= capacidade) {
@@ -50,28 +24,28 @@ bool guloso(long chute, const vector<long>& sacos, long C, long T) {
     return true;
 }
 
-int main(int argc, char *argv[]){
-    long N = stoi(argv[1]);  //Sacos de Pipoca
-    long C = stoi(argv[2]); // N de Competidores Disponível
-    long T = stoi(argv[3]); // Velocidade
-
-
-    long soma = 0;
+int main() {
+    long N, C, T;
+    
+    cin >> N >> C >> T; //Sacos de pipocas, N de Competidores, Velocidade
 
     vector<long> sacos;
+    long soma = 0;
+    long maior = 0;
 
-    for (int i = 4; i < 3 + N; i++) {
-        long val = stol(argv[i]);
+    for (int i = 0; i < N; i++) {
+        long val;
+        cin >> val;
         sacos.push_back(val);
         soma += val;
+        maior = max(maior, val);
     }
 
-    //Busca Binária
-
-    long ini = 1;
-    long fim = soma;
+    long ini = (maior + T - 1) / T; // menor tempo possível
+    long fim = soma; // maior tempo possível
     long resp = fim;
 
+    // Busca binária 
     while (ini <= fim) {
         long meio = (ini + fim) / 2;
 
@@ -83,6 +57,7 @@ int main(int argc, char *argv[]){
         }
     }
 
+    // Imprime o resultado final
     cout << resp << "\n";
 
     return 0;
