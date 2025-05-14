@@ -1,54 +1,89 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <vector>
 
 using namespace std;
 
-struct Bucket {
-    int vol;
-    bool taken;
-  };
+/*bool guloso(long chute, const vector<long>& sacos_original, long C, long T) {
+    vector<long> sacos = sacos_original; 
+    long capacidade = T * chute;
 
-bool allBucketsEmpty(Bucket sacos[], int N){
-    for (int i = 0; i < N; ++i) {
-        if (sacos[i].vol > 0) {
-            return false;
-        };
+    long atual = 0;
+    while (!sacos.empty()) {
+        long volume = sacos.back();
+        sacos.pop_back();
+
+        if (volume > capacidade) return false;
+
+        if (atual + volume <= capacidade) {
+            atual += volume;
+        } 
+        
+        else {
+            C--;
+            if (C == 0) return false;
+            atual = volume;
+        }
     }
-    return true; 
-};
+
+    return true;
+}*/
+
+bool guloso(long chute, const vector<long>& sacos, long C, long T) {
+    long capacidade = T * chute;
+    long atual = 0;
+
+    for (int i = 0; i < sacos.size(); ++i) {
+        long volume = sacos[i];
+        if (volume > capacidade) return false;
+
+        if (atual + volume <= capacidade) {
+            atual += volume;
+        } else {
+            C--;
+            if (C == 0) return false;
+            atual = volume;
+        }
+    }
+
+    return true;
+}
 
 int main(int argc, char *argv[]){
-    int N = stoi(argv[1]);  //Sacos de Pipoca
-    int C = stoi(argv[1]); // N de Competidores Disponível
-    int T = stoi(argv[1]); // Velocidade
+    long N = stoi(argv[1]);  //Sacos de Pipoca
+    long C = stoi(argv[2]); // N de Competidores Disponível
+    long T = stoi(argv[3]); // Velocidade
 
-    Bucket sacos[N]; //Registrar o Volume de Cada Saco
 
-    int time = 0; //Tempo total
-    int Taken[C];
-    int aux = 0;
+    long soma = 0;
 
-    for (int i = 0; i ++; i < N){
-        sacos[i].vol = stoi(argv[i+4]);
-        sacos[i].taken = false;
+    vector<long> sacos;
+
+    for (int i = 4; i < 3 + N; i++) {
+        long val = stol(argv[i]);
+        sacos.push_back(val);
+        soma += val;
     }
 
-    while (!allBucketsEmpty(sacos, N)){
-        for (int i = 0; i ++; i < N){
-            if(sacos[i].taken == false && sacos[i].vol > 0){
-                Taken[C] == i;
-                C--;
-                sacos[i].taken = true;
-            }
-            if (C == 0){
-                i  == N;
-            }
+    //Busca Binária
+
+    long ini = 1;
+    long fim = soma;
+    long resp = fim;
+
+    while (ini <= fim) {
+        long meio = (ini + fim) / 2;
+
+        if (guloso(meio, sacos, C, T)) {
+            resp = meio;
+            fim = meio - 1;
+        } else {
+            ini = meio + 1;
         }
-
-
-
     }
 
-    return time;
+    cout << resp << "\n";
+
+    return 0;
 }
