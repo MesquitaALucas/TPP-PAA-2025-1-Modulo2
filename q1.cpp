@@ -2,42 +2,58 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <limits>
 
 using namespace std;
 
-int main(int argc, char *argv[]){
-    int j = 1;
-    while(true){
-        int M = stoi(argv[j]); //Comprimento  
-        j++;
-        int N = stoi(argv[j]); //Largura
-        j++;
-        if (N == 0 && M == 0) break; 
-        int L = stoi(argv[j]); //Largura das Tabuas
-        j++;
-        int K = stoi(argv[j]); //Numero de Tabuas
-        j++;
 
-        int tabuas[K];
-        int Mochila[K][K];
-        int goal = 0;
-        int NumTabuas = 0;
+int main() {
+    while (true) {
+        long M, N, L, K,aux;
+        long goal = 0;
+        long resposta = 0;
+        long usar = 0;
 
-        for(int i=0; i<K; i++){
-            tabuas[i] == stoi(argv[i+j+1]);
-            j++;
+        cin >> M >> N;
+ 
+        if (M == 0 && N == 0) break;
+
+        M = M*100;
+        N = N*100;
+
+        cin >> L >> K;
+
+        vector<long> tabuas;
+
+        for (long i = 0; i < K; ++i) {
+            cin >> aux;
+            tabuas.push_back(aux);
         }
 
-        //MONTAR A MATRIZ
 
-        if(N%K != 0){
-            cout << "impossivel\n";
+        if(N%L == 0){
+            goal = M*(N/L);
         }
-        else{
-            goal = M * (N/K);
+        else if (M%L == 0){
+            goal = M*(N/L);
         }
 
-        //PROCURAR O GOAL E ENCONTRAR O NÚMERO DE TABUAS 
+        while(true){
+            usar = tabuas[(tabuas.size()-1)];
+            tabuas.pop_back();
+            goal = goal - usar;
+            resposta++;
+            if (tabuas.empty() == 1 || goal < 0) {
+                printf("impossivel\n");
+                break;
+            }
+            if (goal == 0){
+                printf("%ld\n", resposta);
+            }
+            
+            
+        }
+
 
     }
 
