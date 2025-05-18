@@ -1,62 +1,82 @@
 #include <iostream>
-#include <fstream>
-#include <string>
 #include <vector>
-#include <limits>
+#include <algorithm>
 
 using namespace std;
 
-
 int main() {
     while (true) {
-        long M, N, L, K,aux;
-        long goal = 0;
-        long resposta = 0;
-        long usar = 0;
-
+        long M, N;
         cin >> M >> N;
- 
         if (M == 0 && N == 0) break;
 
-        M = M*100;
-        N = N*100;
-
+        long L, K;
         cin >> L >> K;
 
-        vector<long> tabuas;
-
+        vector<long> tabuas(K);
         for (long i = 0; i < K; ++i) {
-            cin >> aux;
-            tabuas.push_back(aux);
+            cin >> tabuas[i];
+            tabuas[i] *= 100; // converter para cm
         }
 
+        M *= 100;
+        N *= 100;
 
-        if(N%L == 0){
-            goal = M*(N/L);
-        }
-        else if (M%L == 0){
-            goal = M*(N/L);
-        }
+        sort(tabuas.begin(), tabuas.end());
 
-        while(true){
-            usar = tabuas[(tabuas.size()-1)];
-            tabuas.pop_back();
-            goal = goal - usar;
-            resposta++;
-            if (tabuas.empty() == 1 || goal < 0) {
-                printf("impossivel\n");
-                break;
+        long melhor = -1;
+
+        // Tentar as duas orientações: tábuas alinhadas no sentido de M ou de N
+        for (int orient = 0; orient < 2; ++orient) {
+            long largura = (orient == 0 ? N : M);
+            long comprimento = (orient == 0 ? M : N);
+
+            if (largura % L != 0) continue;
+
+            long faixas = largura / L;
+            long i = 0, j = K - 1;
+            long usadas = 0;
+            long restantes = faixas;
+
+            vector<bool> usada(K, false);
+
+            // Primeiro usar tábuas exatas
+            for (long x = 0; x < K && restantes > 0; ++x) {
+                if (tabuas[x] == comprimento && !usada[x]) {
+                    usada[x] = true;
+                    usadas++;
+                    restantes--;
+                }
             }
-            if (goal == 0){
-                printf("%ld\n", resposta);
+
+            // Agora tentar pares
+            i = 0, j = K - 1;
+            while (i < j && restantes > 0) {
+                if (usada[i]) { i++; continue; }
+                if (usada[j]) { j--; continue; }
+
+                long soma = tabuas[i] + tabuas[j];
+                if (soma == comprimento) {
+                    usada[i] = usada[j] = true;
+                    usadas += 2;
+                    restantes--;
+                    i++;
+                    j--;
+                } else if (soma < comprimento) {
+                    i++;
+                } else {
+                    j--;
+                }
             }
-            
-            
+
+            if (restantes == 0) {
+                if (melhor == -1 || usadas < melhor) melhor = usadas;
+            }
         }
 
-
+        if (melhor == -1) cout << "impossivel" << endl;
+        else cout << melhor << endl;
     }
-
 
     return 0;
 }
