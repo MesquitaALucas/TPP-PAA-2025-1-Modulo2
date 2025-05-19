@@ -26,7 +26,6 @@ int main() {
 
         long melhor = -1;
 
-        // Tentar as duas orientações: tábuas alinhadas no sentido de M ou de N
         for (int orient = 0; orient < 2; ++orient) {
             long largura = (orient == 0 ? N : M);
             long comprimento = (orient == 0 ? M : N);
@@ -40,7 +39,6 @@ int main() {
 
             vector<bool> usada(K, false);
 
-            // Primeiro usar tábuas exatas
             for (long x = 0; x < K && restantes > 0; ++x) {
                 if (tabuas[x] == comprimento && !usada[x]) {
                     usada[x] = true;
@@ -49,7 +47,6 @@ int main() {
                 }
             }
 
-            // Agora tentar pares
             i = 0, j = K - 1;
             while (i < j && restantes > 0) {
                 if (usada[i]) { i++; continue; }
